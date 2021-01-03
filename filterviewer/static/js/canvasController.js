@@ -2,17 +2,27 @@
 
 class CanvasController {
     constructor(props) {
-        this.images = [];
-        this.canvas = props["canvas"];
-
-        this.imagePadding = Utils.optional(props, "padding",  10);
-        this.imagesPerRow = Utils.optional(props, "img_per_row",  5);
-        this.imageDisplaySize = Utils.optional(props, "img_size",  32);
-
-        this.onClickCallback = null;
         let self = this;
 
+        // Inner images
+        this.images = [];
 
+        // Canvas obj
+        this.canvas = props["canvas"];
+
+        // Padding between inner images
+        this.imagePadding = Utils.optional(props, "padding",  10);
+
+        // Images per canvas row
+        this.imagesPerRow = Utils.optional(props, "img_per_row",  5);
+
+        // Image display size ( for scaling purposes )
+        this.imageDisplaySize = Utils.optional(props, "img_size",  64);
+
+        // Callback for when canvas is clicked
+        this.onClickCallback = null;
+
+        // Mapping mouse click event
         this.canvas.on("mousedown", function (e) {
             Utils.canvasPositionCallback(self.canvas, e, function(x, y) {
                 self.onClickCallback.apply(null, self.convertCoords2Image(x,y));
