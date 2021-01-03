@@ -1,0 +1,20 @@
+{% extends "filterviewer/index.html" %}
+
+{% block title %}CNN Viewer{% endblock %}
+{% block section %}CNN Viewer{% endblock %}
+
+{% block javascript %}
+    {% load static %}
+    <script src="{% static 'js/Utils.js' %}"></script>
+    <script src="{% static 'js/canvasController.js' %}"></script>
+    <script src="{% static 'js/image.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <canvas class="mainCanvas"></canvas>
+    <script>
+        $(function() {
+            new ViewerController();
+        })
+    </script>
+{% endblock %}
