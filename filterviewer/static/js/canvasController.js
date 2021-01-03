@@ -4,11 +4,24 @@ class CanvasController {
     constructor(props) {
         this.images = [];
         this.canvas = props["canvas"];
-        // console.log(this.canvas);
 
-        this.imagePadding = Utils.optional(props, "padding",  5);
+        this.imagePadding = Utils.optional(props, "padding",  10);
         this.imagesPerRow = Utils.optional(props, "img_per_row",  5);
         this.imageDisplaySize = Utils.optional(props, "img_size",  32);
+
+        this.onClickCallback = null;
+        let self = this;
+
+
+        this.canvas.on("mousedown", function (e) {
+            Utils.canvasPositionCallback(self.canvas, e, function(x, y) {
+
+            });
+        })
+
+        // TODO set size of canvas based on parameters
+        // TODO OR
+        // TODO change parameters based on size of canvas
 
     }
 
@@ -22,32 +35,54 @@ class CanvasController {
         let y = 0;
 
         for (let i = 0; i < this.images.length; i++) {
-            x = i % this.imagesPerRow + this.imagePadding;
-            y = /*i < this.imagesPerRow ? 0 :*/ i / this.imagesPerRow + this.imagePadding;
-            // console.log(x,y);
 
-            let imageData = ctx.createImageData(this.imageDisplaySize, this.imageDisplaySize);
-            let data = imageData.data;
-            let imagePixels = this.images[i].getPixels();
-            // console.log(data.length);
-            // console.log(data);
-            for (let pix = 0; pix < data.length; pix += 4) {
-                data[pix] = this.images[i][pix]           // R
-                data[pix + 1] = imagePixels[pix + 1]   // G
-                data[pix + 2] = imagePixels[pix + 2]   // B
-                data[pix + 3] = imagePixels[pix + 3]   // A
-            }
+            x = (i % this.imagesPerRow) * (this.imageDisplaySize + this.imagePadding) + this.imagePadding;
+            y = /*i < this.imagesPerRow ? 0 :*/ (i / this.imagesPerRow) * (this.imageDisplaySize + this.imagePadding) + this.imagePadding;
 
-            // console.log(data);
-
-            ctx.putImageData(imageData, x, y);
+            this.updateWImage(this.images[i], x, y);
         }
+    }
+
+    updateWImage(image, x, y) {
+        let canvasObj = this.canvas[0];
+        let ctx = canvasObj.getContext("2d");
+        let imageData = ctx.createImageData(this.imageDisplaySize, this.imageDisplaySize);
+        let data = imageData.data;
+        let scaleFactorX = Math.ceil(image.getWidth() / this.imageDisplaySize);
+
+        image = Utils.zoomImg(image, scaleFactorX, scaleFactorX);
+
+        let imagePixels = image.getPixels();
+
+        Utils.copyImageArr(imagePixels, data);
+
+        ctx.putImageData(imageData, x, y);
     }
 
     addImage(image, idx) {
         this.images.splice(idx, 0, image);
     }
 
+    /**
+     * Callback called when canvas is clicked
+     * @param callback Receives x,y of position clicked on canvas
+     */
+    onClick(callback) {
+        this.onClickCallback = callback;
+    }
 
+    convertCoords2Image(mouseX, mouseY) {
+
+        for (let i = 0; i < this.images.length; i++) {
+            let x = i % this.imagesPerRow;
+            let y = i / this.imagesPerRow;
+
+
+        }
+        // [padding, padding + size] = 0
+        // [padding + size
+
+        return this.images[0];
+    }
 
 }

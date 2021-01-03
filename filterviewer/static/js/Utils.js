@@ -7,19 +7,23 @@ class Utils {
         return Utils.isDefined(map[key]) ? map[key] : defaultValue;
     }
 
-    static solidImgArray(width, height, color) {
-        let res = new Uint8ClampedArray(width * height * 4);
-        this.updateImgArrayWithColor(res, color);
-        return res;
-    }
-
     static updateImgArrayWithColor(array, color) {
         for (let x = 0; x < array.length; x+=4) {
-            array[x  ] = color[0];           // some R value [0, 255]
-            array[x+1] = color[1];           // some G value
-            array[x+2] = color[2];           // some B value
-            array[x+3] = color[3];           // set alpha channel
+            Utils.copyPixel(color, array, 0, x);
         }
+    }
+
+    static copyImageArr(srcImageArr, targetImgArr) {
+        for (let x = 0; x < srcImageArr.length; x+=4) {
+            Utils.copyPixel(srcImageArr, targetImgArr, x, x);
+        }
+    }
+
+    static copyPixel(sourceImgArr, targetImgArr, srcIdx, targetIdx) {
+        targetImgArr[targetIdx  ] = sourceImgArr[srcIdx  ];           // some R value [0, 255]
+        targetImgArr[targetIdx+1] = sourceImgArr[srcIdx+1];           // some G value
+        targetImgArr[targetIdx+2] = sourceImgArr[srcIdx+2];           // some B value
+        targetImgArr[targetIdx+3] = sourceImgArr[srcIdx+3];           // set alpha channel
     }
 
     static updateImgArrayWithRandom(array) {
@@ -32,6 +36,14 @@ class Utils {
     }
 
     static solidImg(width, height, color) {
+        let image = new MyImage(width, height);
+        image.updatePixels(function (pixels) {
+           Utils.updateImgArrayWithColor(pixels, color);
+        });
+        return image;
+    }
+
+    static randomImg(width, height) {
         let image = new MyImage(width, height);
         image.updatePixels(function (pixels) {
            Utils.updateImgArrayWithRandom(pixels);
@@ -62,10 +74,7 @@ class Utils {
                         oldPos = (y * img.getWidth() + x) * 4;
                         max = Math.max(max, oldPos);
 
-                        res[newPos  ] = pixels[oldPos  ];           // some R value [0, 255]
-                        res[newPos+1] = pixels[oldPos+1];           // some G value
-                        res[newPos+2] = pixels[oldPos+2];           // some B value
-                        res[newPos+3] = pixels[oldPos+3];           // set alpha channel
+                        Utils.copyPixel(pixels, res, oldPos, newPos);
 
                         ey += 1;
                     }
@@ -75,14 +84,20 @@ class Utils {
             }
         }
 
-        img.setPixels(res);
-        img.setHeight(img.getHeight() * factorY);
-        img.setWidth(img.setWidth() * factorX);
-
-        return img;
+        let newImg = new MyImage(img.getWidth() * factorX, img.getHeight() * factorY);
+        newImg.setPixels(res);
+        return newImg;
     }
 
     static randomIntFromInterval(min, max) { // min and max included
       return Math.floor(Math.random() * (max - min + 1) + min);
     }
+
+    static canvasPositionCallback(canvas, event, callback) {
+        const rect = canvas[0].getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        callback(x, y);
+    }
+
 }
