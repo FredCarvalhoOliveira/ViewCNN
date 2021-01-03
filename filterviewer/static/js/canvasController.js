@@ -15,7 +15,7 @@ class CanvasController {
 
         this.canvas.on("mousedown", function (e) {
             Utils.canvasPositionCallback(self.canvas, e, function(x, y) {
-
+                self.onClickCallback.apply(null, self.convertCoords2Image(x,y));
             });
         })
 
@@ -73,16 +73,17 @@ class CanvasController {
 
     convertCoords2Image(mouseX, mouseY) {
 
-        for (let i = 0; i < this.images.length; i++) {
-            let x = i % this.imagesPerRow;
-            let y = i / this.imagesPerRow;
+        let sectorX = this.getCoordSector(mouseX);
+        let sectorY = this.getCoordSector(mouseY);
 
+        if (mouseX <= sectorX * (this.imagePadding + this.imageDisplaySize) + this.imagePadding) return [-1, -1];
+        if (mouseY <= sectorY * (this.imagePadding + this.imageDisplaySize) + this.imagePadding) return [-1, -1];
 
-        }
-        // [padding, padding + size] = 0
-        // [padding + size
+        return [sectorX, sectorY];
+    }
 
-        return this.images[0];
+    getCoordSector(pos) {
+        return Math.floor(pos / (this.imageDisplaySize + this.imagePadding));
     }
 
 }
