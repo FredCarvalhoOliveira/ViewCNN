@@ -4,7 +4,7 @@ class Utils {
     }
 
     static optional(map, key, defaultValue) {
-        return Utils.isDefined(map[key]) ? map[key] : defaultValue;
+        return map && Utils.isDefined(map[key]) ? map[key] : defaultValue;
     }
 
     static updateImgArrayWithColor(array, color) {
@@ -53,6 +53,9 @@ class Utils {
 
     static zoomImg(img, factorX, factorY) {
 
+        factorX = Math.max(1, factorX);
+        factorY = Math.max(1, factorY);
+
         let res = new Uint8ClampedArray(img.getWidth() * factorX * img.getHeight() * factorY * 4);
 
         let newPos = 0;
@@ -100,4 +103,7 @@ class Utils {
         callback(x, y);
     }
 
+    static twod2oned(x,y, width) {
+        return y * width + x
+    }
 }

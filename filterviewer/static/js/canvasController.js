@@ -37,7 +37,7 @@ class CanvasController {
         for (let i = 0; i < this.images.length; i++) {
 
             x = (i % this.imagesPerRow) * (this.imageDisplaySize + this.imagePadding) + this.imagePadding;
-            y = /*i < this.imagesPerRow ? 0 :*/ (i / this.imagesPerRow) * (this.imageDisplaySize + this.imagePadding) + this.imagePadding;
+            y = /*i < this.imagesPerRow ? 0 :*/ Math.floor(i / this.imagesPerRow) * (this.imageDisplaySize + this.imagePadding) + this.imagePadding;
 
             this.updateWImage(this.images[i], x, y);
         }
@@ -48,7 +48,10 @@ class CanvasController {
         let ctx = canvasObj.getContext("2d");
         let imageData = ctx.createImageData(this.imageDisplaySize, this.imageDisplaySize);
         let data = imageData.data;
-        let scaleFactorX = Math.ceil(image.getWidth() / this.imageDisplaySize);
+
+        let scaleFactorX = image.getWidth() / this.imageDisplaySize;
+        scaleFactorX = scaleFactorX < 1 ? 1 / scaleFactorX : scaleFactorX;
+        scaleFactorX = Math.round(scaleFactorX);
 
         image = Utils.zoomImg(image, scaleFactorX, scaleFactorX);
 
