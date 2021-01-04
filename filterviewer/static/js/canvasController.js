@@ -99,4 +99,8 @@ class CanvasController {
         return Math.floor(pos / (this.imageDisplaySize + this.imagePadding));
     }
 
+
+    setImages(imgs) {
+        this.images = imgs;
+    }
 }

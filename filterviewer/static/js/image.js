@@ -1,7 +1,9 @@
 class MyImage {
-    constructor(width, height) {
+    constructor(width, height, layer, id) {
         this.width = width;
         this.height = height;
+        this.layer = layer;
+        this.id = id;
 
         this.pixels = new Uint8ClampedArray(width * height * 4);
     }
