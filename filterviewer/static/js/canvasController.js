@@ -37,7 +37,11 @@ class CanvasController {
 
     update() {
         let canvasObj = this.canvas[0];
+        canvasObj.width = this.canvas.parent().width() - 40;
+        canvasObj.height = this.canvas.parent().height() - 40;
+
         let ctx = canvasObj.getContext("2d");
+        ctx.fillStyle = "#e0e0e0";
         ctx.fillRect(0,0, this.canvas[0].width, this.canvas[0].height);
         ctx.imageSmoothingEnabled = false;
 
