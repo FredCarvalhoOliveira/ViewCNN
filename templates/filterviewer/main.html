@@ -24,14 +24,16 @@
         })
     </script>
     <br>
-
+    <label for="urlImage">Select image from url:</label> <br>
+    <input type="text" id="urlImage" name="urlImage">
+    <input type="submit" value="Submit">
+    <br><br>
+    Or upload it:
     <input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;">
-    <label for="file" class="btn-3">
-    <span>upload</span>
-    </label>
+    <label for="file" class="btn-3"> <span>upload</span></label>
+
     <br>
     <img id="output" width="500" />
-
     <script>
     var loadFile = function(event) {
 	var image = document.getElementById('output');
