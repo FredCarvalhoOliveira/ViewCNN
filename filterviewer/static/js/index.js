@@ -45,12 +45,14 @@ class ViewerController {
 
 
         // Filter list
-        this.filters = [
-            Utils.randomImg(this.filterSize, this.filterSize),
-            Utils.randomImg(this.filterSize, this.filterSize),
-            Utils.randomImg(this.filterSize, this.filterSize),
-            Utils.randomImg(this.filterSize, this.filterSize),
-        ];
+        this.filters = {
+            layer2: [
+                Utils.randomImg(this.filterSize, this.filterSize),
+                Utils.randomImg(this.filterSize, this.filterSize),
+                Utils.randomImg(this.filterSize, this.filterSize),
+                Utils.randomImg(this.filterSize, this.filterSize),
+            ]
+        };
 
 
         // Filter canvas definition
@@ -61,8 +63,8 @@ class ViewerController {
         });
 
         // Populate canvas images
-        for (let x = 0; x < this.filters.length; x++) {
-            this.filterCanvasController.addImage(this.filters[x]);
+        for (let x = 0; x < this.filters["layer2"].length; x++) {
+            this.filterCanvasController.addImage(this.filters["layer2"][x]);
         }
 
         // Redraw canvas
@@ -74,6 +76,8 @@ class ViewerController {
             console.log("Filter " + self.selectedFilter + " was pressed at (", x, ", ", y, ")");
 
             self.filterCanvasController.update();
+
+            self.loadFilters(0);
             // TODO Do something with this knowledge :D
         });
 
@@ -84,50 +88,20 @@ class ViewerController {
 
 
     update() {
-        this.filterCanvasController.setImages(this.filters);
+        this.filterCanvasController.setImages(this.filters["layer0"]);
+        this.filterCanvasController.update();
     }
 
-    parseJSON2Image(json) {
+    parseNN2Image(json) {
         this.filters = [];
         for (let layerKey in json) {
             if (!json.hasOwnProperty(layerKey)) continue;
             let layer = json[layerKey];
+            let layerId = layerKey.replace(/^\D+/g, "");
             this.filters[layerKey] = [];
 
             console.log("Layer ", layerKey, " has ", layer.length, " filters");
-            for (let i = 0; i < layer.length; i++) {
-                let id = layer[i]["id"];
-                let data = layer[i]["data"];
-                let width = layer[i]["width"];
-
-                // data = Utils.normalizeArray(data);
-
-                let myImage = new MyImage(width, width, layerKey, id);
-                let max = -1;
-                let min = 1000;
-                myImage.updatePixels(function (pixels) {
-                    for (let i = 0; i < data.length; i++) {
-                        // let newPix = Utils.interpolateHSL([69, 13, 84, 255], [253, 231, 37, 255], data[i]);
-
-                        // let newPix = Utils.interpolateColors([0,0,3, 255], [252,253,164, 255], data[i]);
-                        // let newPix = Utils.interpolateHSL([0,3,0, 255], [252,253,164, 255], data[i]);
-
-                        let newPix = Utils.interpolateHSL([69, 13, 84, 255], [253, 231, 37, 255], data[i]); // gud gud
-                        // let newPix = Utils.interpolateColors([0, 0, 150, 255], [255, 255, 0, 255], data[i]);
-                        // let newPix = Utils.interpolateColors([0, 0, 0, 255], [255, 255, 255, 255], data[i]);
-                        max = Math.max(max, data[i]);
-                        min = Math.min(min, data[i]);
-                        Utils.copyPixel(newPix, pixels, 0, i * 4);
-                        // console.log(newPix);
-                    }
-                    // console.log(pixels);
-                    //
-                    // console.log("MAX ", max);
-                    // console.log("MIN ", min);
-                });
-
-                this.filters[layerKey].push(myImage);
-            }
+            this.filters[layerKey] = this.parseLayer2Image(layer, layerId);
         }
 
         this.filterCanvasController.setImages(this.filters["layer1"]);
@@ -135,15 +109,59 @@ class ViewerController {
         this.filterCanvasController.update();
     }
 
+    /**
+     * Converts an array of filters to images.
+     * @param layer Array of filters
+     * @param layer_id Layer id
+     */
+    parseLayer2Image(layer, layer_id) {
+        let res = [];
 
-    loadFilters() {
+        for (let i = 0; i < layer.length; i++) {
+            let id = layer[i]["id"];
+            let data = layer[i]["data"];
+            let width = layer[i]["width"];
+
+            let myImage = new MyImage(width, width, layer_id, id);
+            myImage.updatePixels(function (pixels) {
+                for (let i = 0; i < data.length; i++) {
+
+                    // [69, 13,  84, 255], [253, 231,  37, 255]
+                    // [0 ,  0,   3, 255], [252, 253, 164, 255]
+                    // [0 ,  3,   0, 255], [252, 253, 164, 255]
+                    // [0 ,  0, 150, 255], [255, 255,   0, 255]
+                    // [0 ,  0,   0, 255], [255, 255, 255, 255]
+
+                    let newPix = Utils.interpolateHSL(
+                        [69, 13, 84, 255],
+                        [253, 231, 37, 255],
+                        data[i]
+                    ); // gud gud
+
+                    Utils.copyPixel(newPix, pixels, 0, i * 4);
+                }
+            });
+            res.push(myImage);
+        }
+
+        return res;
+    }
+
+
+    loadFilters(layerId) {
         let self = this;
         $.get(
-            "/test?layer=0",
+            "/filters/" + layerId,
             function (data) {
-                self.filters = JSON.parse(data);
+                if (data && data.error) {
+                    console.log(data.error);
+                    return;
+                }
+
+                self.filters["layer" + layerId] = self.parseLayer2Image(data, layerId);
+                console.log(self.filters);
                 self.update();
-            }
+            },
         );
     }
 }
