@@ -65,7 +65,7 @@ def endPt_classify(request):
         data = {"class": 'cat'}
     else:
         data = {"class": 'dog'}
-    print(">> ServerResponded: " + data["class"])
+    print(">> Server Responded: " + data["class"])
 
     return JsonResponse(data, safe=False)
 

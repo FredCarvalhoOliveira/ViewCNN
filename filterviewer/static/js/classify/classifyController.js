@@ -4,17 +4,17 @@ class ClassifyController {
     constructor(props) {
         let self = this;
 
-        console.log("ClassifyController");
         $('.myCanvas').css('background-color', 'rgba(50, 50, 50, 1)');
 
         $("#classifyBttn").click(function(){
             var imgUrl = $("#imageUrl").val();
 
-            $("#imgPreview").attr("src", imgUrl);
-            $("#classification").text('');
-            $("#loadWheel").show();
-
-            self.classify(imgUrl)
+            if (imgUrl !== "") {
+                $("#imgPreview").attr("src", imgUrl);
+                $("#classification").text('');
+                $("#loadWheel").show();
+                self.classify(imgUrl)
+            }
         });
     }
 
