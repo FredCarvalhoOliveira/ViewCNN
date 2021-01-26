@@ -23,8 +23,6 @@ class ClassifyController {
             "/classify/getClass",
             {imgUrl: imageUrl},
             function (data) {
-                console.log(data);
-                console.log(data['class']);
                 // classification = data['class'];
                 $("#classification").text("I think this is a " + data['class']);
                 $("#loadWheel").hide();
