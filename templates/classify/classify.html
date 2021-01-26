@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Classify{% endblock %}
+{% block section %}Classify{% endblock %}
+
+{% block javascript %}
+    {% load static %}
+    <script src="{% static 'js/classify/classifyController.js' %}"></script>
+{% endblock %}
+
+{% block css %}
+    <style>
+        #imgPreview {
+            padding-top: 20px;
+            display:block;
+            margin:auto;
+        }
+    </style>
+{% endblock %}
+
+
+{% block sidebar %}
+    <li class="nav-item">
+        <a class="nav-link" href="/">Kernel Viewer</a>
+    </li>
+{% endblock %}
+
+
+{% block content %}
+    <script>
+        $(function() {
+            new ClassifyController();
+        })
+    </script>
+
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroup-sizing-default">Image URL</span>
+        </div>
+        <input type="text" id="imageUrl" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+    </div>
+    <button type="button" id="classifyBttn" class="btn btn-primary btn-lg btn-block">Classify</button>
+
+    <div class="row justify-content-md-center pt-3">
+        <div class="col-md-auto">
+            <img id="imgPreview" width="500" />
+        </div>
+    </div>
+    <div class="row justify-content-md-center pt-1">
+        <div class="col-md-auto">
+            <div id="loadWheel" class="spinner-grow" role="status" style="margin-top: 10px; display: none">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <h1 id="classification"></h1>
+        </div>
+    </div>
+
+{% endblock %}

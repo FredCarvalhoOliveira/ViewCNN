@@ -149,6 +149,7 @@ class ViewerController {
 
 
     loadFilters(layerId) {
+        console.log("requesting layer" + layerId);
         let self = this;
         $.get(
             "/filters/" + layerId,
