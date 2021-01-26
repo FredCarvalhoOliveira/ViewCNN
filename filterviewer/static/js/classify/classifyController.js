@@ -5,6 +5,7 @@ class ClassifyController {
         let self = this;
 
         console.log("ClassifyController");
+        $('.myCanvas').css('background-color', 'rgba(50, 50, 50, 1)');
 
         $("#classifyBttn").click(function(){
             var imgUrl = $("#imageUrl").val();
@@ -29,5 +30,9 @@ class ClassifyController {
                 $("#loadWheel").hide();
             }
         );
+    }
+
+    buildLayerFeatureMaps(){
+
     }
 }
