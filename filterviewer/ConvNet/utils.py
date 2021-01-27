@@ -26,6 +26,19 @@ def url_to_image(url):
    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
    return image
 
+def normalizeImg(img):
+   vMin, vMax = np.min(img), np.max(img)
+   img = (img - vMin) / (vMax - vMin)
+   return img
+
+def normalizeFeatureMaps(featMaps):
+   featMaps = featMaps.copy()
+   for layerIdx in range(len(featMaps)):
+      layer = featMaps[layerIdx]
+      for mapIdx in range(len(layer)):
+         layer[mapIdx] = normalizeImg(layer[mapIdx])
+   return featMaps
+
 def serializeFeatureMaps(featureMaps):
    featMapsDict = {}
    for layerIdx in range(len(featureMaps)):
@@ -41,6 +54,7 @@ def serializeFeatureMaps(featureMaps):
          layerJsonArray[kernelIdx] = featMapDict
       featMapsDict['layer' + str(layerIdx)] = layerJsonArray
    return featMapsDict
+
 
 if __name__ == "__main__":
    # Test url_to_image

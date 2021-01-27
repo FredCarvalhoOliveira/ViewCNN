@@ -51,8 +51,6 @@ class ClassifyController {
 
         for(let mapId in layerData){
             if (layerData.hasOwnProperty(mapId)) {
-                console.log(layerDiv);
-
                 let layerId = layerDiv.attr('id');
                 let mapCanvasId = layerId + "m" + mapId;
                 let mapCanvas = $("<canvas id='" + mapCanvasId + "' class='mapCanvas' width='100' height='100'></canvas>");
@@ -63,6 +61,8 @@ class ClassifyController {
     }
 
     buildFeatureMap(mapCanvasId, mapData){
+
+        console.log(mapData);
 
         let canvas    = document.getElementById(mapCanvasId);
         let ctx       = canvas.getContext('2d');

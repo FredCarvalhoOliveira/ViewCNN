@@ -72,8 +72,39 @@ imgTensor = imgTensor.view(-1, 1, IMG_SIZE, IMG_SIZE).to(device)
 out = net(imgTensor)
 print("Conv output = " + str(out))
 
+def normalizeImg(img):
+   vMin, vMax = np.min(img), np.max(img)
+   img = (img - vMin) / (vMax - vMin)
+   return img
+
+def normalizeFeatureMaps(featMaps):
+   featMaps = featMaps.copy()
+   for layerIdx in range(len(featMaps)):
+      layer = featMaps[layerIdx]
+      for mapIdx in range(len(layer)):
+         layer[mapIdx] = normalizeImg(layer[mapIdx])
+   return featMaps
+
 featureMaps = net.getFeatureMaps()
-serializeFeatureMaps(featureMaps)
+
+print(normalizeFeatureMaps(featureMaps))
+
+
+# unnormalized = featureMaps[0][0]
+# plt.imshow(unnormalized)
+# plt.show()
+#
+#
+# print(unnormalized)
+# print(np.max(unnormalized))
+# print(np.min(unnormalized))
+# vMin, vMax = np.min(unnormalized), np.max(unnormalized)
+# unnormalized = (unnormalized - vMin) / (vMax - vMin)
+#
+# plt.imshow(unnormalized)
+# plt.show()
+
+# serializeFeatureMaps(featureMaps)
 
 if out[0][0] == 1:
    print("CAT: AKA a little devil")
