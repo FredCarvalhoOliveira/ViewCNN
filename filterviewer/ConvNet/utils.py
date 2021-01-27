@@ -38,7 +38,7 @@ def resizeFeatureMaps(featMaps, dWidth, dHeight):
       resizedFeatMaps[layerIdx] = np.zeros((featMaps[layerIdx].shape[0],dHeight ,dWidth), dtype=np.uint8)
 
       for mapIdx in range(len(featMaps[layerIdx])):
-         resizedFeatMaps[layerIdx][mapIdx] = cv2.resize(featMaps[layerIdx][mapIdx].astype(np.uint8), dsize=(dWidth, dHeight))
+         resizedFeatMaps[layerIdx][mapIdx] = cv2.resize(featMaps[layerIdx][mapIdx].astype(np.uint8), dsize=(dWidth, dHeight), interpolation=cv2.INTER_CUBIC)
    return resizedFeatMaps
 
 def serializeFeatureMaps(featureMaps):
