@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 from django.template import loader
 
+from .ConvNet.utils import serializeFeatureMaps
 from .ConvNet.classifier import ConvNet
 import torch
 
@@ -15,10 +16,12 @@ if torch.cuda.is_available():
 else:
     device = torch.device("cpu")
     print("Running on CPU")
+
 net = ConvNet()
 net.load_state_dict(torch.load("filterviewer/ConvNet/models/modelEpoch_19"))
 net.eval()
 net.to(device)
+net.setDebugMode(True)
 
 
 
@@ -59,12 +62,16 @@ def endPt_classify(request):
     imgTensor = imgTensor.view(-1, 1, IMG_SIZE, IMG_SIZE).to(device)
 
     out = net(imgTensor)
+    featMaps = net.getFeatureMaps()
+    serializedMaps = serializeFeatureMaps(featMaps)
+    net.resetFeatureMaps()
     print("Conv output = " + str(out))
 
+    data = {'featureMaps': serializedMaps}
     if out[0][0] == 1:
-        data = {"class": 'cat'}
+        data['class'] = 'cat'
     else:
-        data = {"class": 'dog'}
+        data['class'] = 'dog'
     print(">> Server Responded: " + data["class"])
 
     return JsonResponse(data, safe=False)

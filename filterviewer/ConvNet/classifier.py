@@ -55,6 +55,9 @@ class ConvNet(nn.Module):
    def setDebugMode(self, isInDebugMode):
       self.__isInDebugMode = isInDebugMode
 
+   def resetFeatureMaps(self):
+      self.__featureMaps = []
+
 if __name__ == "__main__":
    net = ConvNet()
    print(net)

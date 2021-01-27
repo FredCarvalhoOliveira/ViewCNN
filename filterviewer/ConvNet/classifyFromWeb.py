@@ -24,6 +24,24 @@ def url_to_image(url):
    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
    return image
 
+def serializeFeatureMaps(featureMaps):
+   featMapsDict = {}
+
+   for layerIdx in range(len(featureMaps)):
+      layer = featureMaps[layerIdx]
+      layerJsonArray = ["" for i in range(len(layer))]
+      for kernelIdx in range(len(layer)):
+         featMapDict = {}
+         featureMap = layer[kernelIdx]
+
+         featMapDict['id']         = str(kernelIdx)
+         featMapDict['data']       = featureMap.flatten().tolist()
+         featMapDict['width']      = featureMap.shape[1]
+         layerJsonArray[kernelIdx] = featMapDict
+      featureMaps['layer' + str(layerIdx)] = layerJsonArray
+   return featMapsDict
+
+
 
 if torch.cuda.is_available():
    device = torch.device("cuda:0")
@@ -38,13 +56,6 @@ net.eval()
 net.to(device)
 net.setDebugMode(True)
 
-
-# net = torch.load("models/modelEpoch_100100_14_10e.pt")
-# net = torch.load("models/modelEpoch_19.pt")
-# net = torch.load("models/modelEpoch_0.pt")
-# net = torch.load("models/dogsVScats_trained_5050_5_10e.pt")
-# net.to(device)
-# net.setDebugMode(True)
 
 URL = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFdPGuvQ59paGYZultU9NLo3tkYG_wUQkkbA&usqp=CAU"
 
@@ -62,6 +73,7 @@ out = net(imgTensor)
 print("Conv output = " + str(out))
 
 featureMaps = net.getFeatureMaps()
+serializeFeatureMaps(featureMaps)
 
 if out[0][0] == 1:
    print("CAT: AKA a little devil")
@@ -71,10 +83,8 @@ else:
 plt.imshow(featureMaps[0][0])
 plt.show()
 
-# cv2.imshow('image',original)
-# cv2.imshow('featureMap', featureMaps[0][0])
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+
+
 
 
 
