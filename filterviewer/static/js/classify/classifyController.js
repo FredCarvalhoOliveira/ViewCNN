@@ -62,21 +62,26 @@ class ClassifyController {
 
     buildFeatureMap(mapCanvasId, mapData){
 
-        console.log(mapData);
 
         let canvas    = document.getElementById(mapCanvasId);
         let ctx       = canvas.getContext('2d');
         let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         let data      = imageData.data;
 
+        let pixels = mapData['data'];
+        console.log(pixels);
+        let pixelIdx = 0;
+
+
         // console.log(featureMaps);
         // // console.log(data);
         for (var i = 0; i < data.length; i += 4) {
             // var avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-            data[i]     = 255; // red
-            data[i + 1] = 0; // green
-            data[i + 2] = 0; // blue
+            data[i]     = pixels[pixelIdx]; // red
+            data[i + 1] = pixels[pixelIdx]; // green
+            data[i + 2] = pixels[pixelIdx]; // blue
             data[i + 3] = 255; // blue
+            pixelIdx += 1;
         }
         ctx.putImageData(imageData, 0, 0);
     }

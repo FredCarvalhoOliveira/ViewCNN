@@ -86,9 +86,32 @@ def normalizeFeatureMaps(featMaps):
          featMaps[layerIdx][mapIdx] = normalizeImg(featMaps[layerIdx][mapIdx])
    return featMaps
 
-featureMaps = net.getFeatureMaps()
 
-print(normalizeFeatureMaps(featureMaps))
+
+
+def resizeFeatureMaps(featMaps, dWidth, dHeight):
+   featMaps = featMaps.copy()
+   resizedFeatMaps = featMaps.copy()
+
+   for layerIdx in range(len(featMaps)):
+      resizedFeatMaps[layerIdx] = np.zeros((featMaps[layerIdx].shape[0],dHeight ,dWidth), dtype=np.uint8)
+
+      for mapIdx in range(len(featMaps[layerIdx])):
+         resizedFeatMaps[layerIdx][mapIdx] = cv2.resize(featMaps[layerIdx][mapIdx].astype(np.uint8), dsize=(dWidth, dHeight))
+   return resizedFeatMaps
+
+featureMaps = net.getFeatureMaps()
+featureMaps = normalizeFeatureMaps(featureMaps)
+resizedMaps = resizeFeatureMaps(featureMaps, 300, 300)
+
+plt.imshow(resizedMaps[0][0])
+plt.show()
+
+plt.imshow(featureMaps[0][0])
+plt.show()
+
+
+# print(normalizeFeatureMaps(featureMaps))
 
 
 # unnormalized = featureMaps[0][0]
@@ -112,8 +135,11 @@ if out[0][0] == 1:
 else:
    print("DOG: look at that good boi <3")
 
-plt.imshow(featureMaps[0][0])
-plt.show()
+# plt.imshow(cv2.resize(featureMaps[0][0], dsize=(500, 500), interpolation=cv2.INTER_CUBIC))
+# plt.show()
+#
+# plt.imshow(featureMaps[0][0])
+# plt.show()
 
 
 

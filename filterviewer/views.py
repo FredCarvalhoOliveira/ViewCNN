@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 from django.template import loader
 
-from .ConvNet.utils import serializeFeatureMaps, normalizeFeatureMaps
+from .ConvNet.utils import serializeFeatureMaps, normalizeFeatureMaps, resizeFeatureMaps
 from .ConvNet.classifier import ConvNet
 import torch
 
@@ -64,6 +64,7 @@ def endPt_classify(request):
     out = net(imgTensor)
     featMaps = net.getFeatureMaps()
     featMaps = normalizeFeatureMaps(featMaps)
+    featMaps = resizeFeatureMaps(featMaps, 100, 100) # TODO make client send image dimensions
     serializedMaps = serializeFeatureMaps(featMaps)
     net.resetFeatureMaps()
     print("Conv output = " + str(out))
