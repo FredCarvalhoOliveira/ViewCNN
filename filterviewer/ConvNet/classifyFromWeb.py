@@ -74,15 +74,16 @@ print("Conv output = " + str(out))
 
 def normalizeImg(img):
    vMin, vMax = np.min(img), np.max(img)
-   img = (img - vMin) / (vMax - vMin)
+   img = ((img - vMin) / (vMax - vMin)) * 255
+   img = img.astype(int)
    return img
 
 def normalizeFeatureMaps(featMaps):
    featMaps = featMaps.copy()
    for layerIdx in range(len(featMaps)):
-      layer = featMaps[layerIdx]
-      for mapIdx in range(len(layer)):
-         layer[mapIdx] = normalizeImg(layer[mapIdx])
+      featMaps[layerIdx] = featMaps[layerIdx].astype(int)
+      for mapIdx in range(len(featMaps[layerIdx])):
+         featMaps[layerIdx][mapIdx] = normalizeImg(featMaps[layerIdx][mapIdx])
    return featMaps
 
 featureMaps = net.getFeatureMaps()
